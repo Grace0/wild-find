@@ -3,26 +3,26 @@ import cv2 as cv
 
 cap = cv.VideoCapture('test1.mp4')
 
-while(1):
-    _, frame = cap.read()
-    hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
+ret, frame1 = cap.read()
+ret, frame2 = cap.read()
 
-    lower_blue = np.array([110,50,50])
-    upper_blue = np.array([130,255,255])
+while cap.isOpened():
+    diff = cv.absdiff(frame1, frame2)
+    gray = cv.cvtColor(diff, cv.COLOR_BGR2GRAY)
 
-    #turn the pixel red
-    high_brown = np.array([0, 0, 0])
-    low_brown = np.array([100, 100, 100])
+    blur = cv.GaussianBlur(gray, (5, 5), 0)
+    _, thresh = cv.threshold(blur, 20, 255, cv.THRESH_BINARY)
+    dilated = cv.dilate(thresh, None, iterations=3)
+    contours, _ = cv.findContours(dilated, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    cv.drawContours(frame1, contours, -1, (0, 255, 0), 2)
 
-    mask = cv.inRange(hsv, high_brown, low_brown)
-
-    brown = cv.bitwise_and(frame, frame, mask=mask)
-    
-    cv.imshow('frame', hsv)
-    cv.imshow('mask', brown)
+    cv.imshow('frame', frame1)
+    frame1 = frame2 #current becomes old
+    ret, frame2 = cap.read() #new
 
     k = cv.waitKey(5) & 0xFF
     if k == 27:
         break
 
 cv.destroyAllWindows()
+cap.release()
