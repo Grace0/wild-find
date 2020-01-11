@@ -1,46 +1,21 @@
-# author: Arun Ponnusamy
-# website: https://www.arunponnusamy.com
+import numpy as np
+import cv2 as cv
 
-# object detection webcam example using tiny yolo
-# usage: python object_detection_webcam_yolov3_tiny.py
+cap = cv.VideoCapture('test1.mp4')
 
-# import necessary packages
-import cvlib as cv
-from cvlib.object_detection import draw_bbox
-import cv2
+while(1):
+    _, frame = cap.read()
+    hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
 
-# open webcam
-rtsp = cv2.VideoCapture("rtsp://admin:momo@192.168.1.103/live")
+    lower_blue = np.array([110,50,50])
+    upper_blue = np.array([130,255,255])
 
-if not rtsp.isOpened():
-    print("Could not open webcam")
-    exit()
+    #turn the pixel red
 
+    cv.imshow('frame', frame)
 
-# loop through frames
-while rtsp.isOpened():
-
-    # read frame from webcam
-    status, frame = rtsp.read()
-
-    if not status:
+    k = cv.waitKey(5) & 0xFF
+    if k == 27:
         break
 
-    # apply object detection
-    bbox, label, conf = cv.detect_common_objects(frame, confidence=0.25, model='yolov3-tiny')
-
-    print(bbox, label, conf)
-
-    # draw bounding box over detected objects
-    out = draw_bbox(frame, bbox, label, conf, write_conf=True)
-
-    # display output
-    cv2.imshow("Real-time object detection", out)
-
-    # press "Q" to stop
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# release resources
-rtsp.release()
-cv2.destroyAllWindows()
+cv.destroyAllWindows()
