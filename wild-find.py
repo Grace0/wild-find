@@ -11,8 +11,15 @@ while(1):
     upper_blue = np.array([130,255,255])
 
     #turn the pixel red
+    high_brown = np.array([0, 0, 0])
+    low_brown = np.array([100, 100, 100])
 
-    cv.imshow('frame', frame)
+    mask = cv.inRange(hsv, high_brown, low_brown)
+
+    brown = cv.bitwise_and(frame, frame, mask=mask)
+    
+    cv.imshow('frame', hsv)
+    cv.imshow('mask', brown)
 
     k = cv.waitKey(5) & 0xFF
     if k == 27:
