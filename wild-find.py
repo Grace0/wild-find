@@ -5,6 +5,8 @@ from imutils.video import VideoStream
 import imutils
 import time
 
+#BEES
+
 cap = cv.VideoCapture('./vid/best-upward-bees.mp4')
 
 ret, frame1 = cap.read()
@@ -25,7 +27,7 @@ while cap.isOpened():
     cv.imshow('frame1', frame1)
     cv.imshow('diff', diff)
     cv.imshow('gray', gray)
-    
+
     frame1 = frame2 #current becomes old
     ret, frame2 = cap.read() #new
 
