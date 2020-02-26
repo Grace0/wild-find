@@ -7,19 +7,12 @@ import time
 
 img_array = [] #for frames with green boxes
 
-#in general, not just bees
-
-#write clips of when the green box appears -- clip starts when green box appears and stops when that same one disappears
-#write clips of when something moving appears -- clip starts when thing appears and stops when that same thing disappears
-
 cap = cv.VideoCapture('./vid/best-upward-bees.mp4')
 fps = cap.get(cv.CAP_PROP_FPS) #15
 
 ret, frame1 = cap.read()
-ret, frame2 = cap.read()
-
-height, width, layers = img.shape #just do this once
-size = (width,height)
+height, width, layers = frame1.shape #just do this once, for VideoWriter
+size = (width,height) #1920, 1080
 
 def detect_green_boxes():
     ret, frame = cap.read()
@@ -31,16 +24,17 @@ def detect_green_boxes():
 
     mask = cv.inRange(frame, greenLower, greenUpper)
     output = cv.bitwise_and(frame, frame, mask = mask)
+    edged = cv.Canny(output, 30, 200)
 
-#why was I trying to do this? - need there to be at least one contour
-    # cnts = cv.findContours(mask.copy(), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-    #
-    # for cnt in cnts:
-    #     contours = mask.copy()
-    #     cv.drawContours(contours,[cnt],0,(0,0,255),-1)
-    #     cv.imshow('conts', contours)
-    if cnts.len() > 0:
-        img_array.append(frame)
+    contours, hierarchy = cv.findContours(edged.copy(), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+#    cnts = cv.findContours(output, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+#    cnts = imutils.grab_contours(cnts)
+    cv.drawContours(frame, contours, -1, (0, 255, 0), 1)
+
+    #print("contours ", len(cnts))
+
+    #if len(cnts) > 0:
+    #    img_array.append(frame)
 
     #_,threshold = cv.threshold(gray, 110, 255, cv.THRESH_BINARY)
     #contours,_=cv.findContours(threshold, cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
@@ -79,8 +73,8 @@ while cap.isOpened():
 cap.release()
 cv.destroyAllWindows()
 
-out = cv.VideoWriter('movement.avi',cv.VideoWriter_fourcc(*'DIVX'), 15, size)
-for i in range(len(img_array)):
-    out.write(img_array[i])
-
-out.release()
+# out = cv.VideoWriter('movement.avi',cv.VideoWriter_fourcc(*'DIVX'), 15, size)
+# for i in range(len(img_array)):
+#     out.write(img_array[i])
+#
+# out.release()
