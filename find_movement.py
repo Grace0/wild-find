@@ -5,15 +5,21 @@ from imutils.video import VideoStream
 import imutils
 import time
 
+img_array = [] #for frames with green boxes
+
 #in general, not just bees
 
 #write clips of when the green box appears -- clip starts when green box appears and stops when that same one disappears
 #write clips of when something moving appears -- clip starts when thing appears and stops when that same thing disappears
 
 cap = cv.VideoCapture('./vid/best-upward-bees.mp4')
+fps = cap.get(cv.CAP_PROP_FPS) #15
 
 ret, frame1 = cap.read()
 ret, frame2 = cap.read()
+
+height, width, layers = img.shape #just do this once
+size = (width,height)
 
 def detect_green_boxes():
     ret, frame = cap.read()
@@ -22,27 +28,25 @@ def detect_green_boxes():
 
     greenLower = np.array([0, 100, 0], dtype="uint8") #68, 230, 38 - 28, 220, 58
     greenUpper = np.array([100, 255, 100], dtype="uint8") #-48, 240, 78
-#    pts = deque(maxlen=args["buffer"])
-
-	# cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
-	# 	cv2.CHAIN_APPROX_SIMPLE)
-	# cnts = imutils.grab_contours(cnts)
-	# center = None
 
     mask = cv.inRange(frame, greenLower, greenUpper)
     output = cv.bitwise_and(frame, frame, mask = mask)
+
+#why was I trying to do this? - need there to be at least one contour
+    # cnts = cv.findContours(mask.copy(), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    #
+    # for cnt in cnts:
+    #     contours = mask.copy()
+    #     cv.drawContours(contours,[cnt],0,(0,0,255),-1)
+    #     cv.imshow('conts', contours)
+    if cnts.len() > 0:
+        img_array.append(frame)
 
     #_,threshold = cv.threshold(gray, 110, 255, cv.THRESH_BINARY)
     #contours,_=cv.findContours(threshold, cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
     cv.imshow('frame', np.hstack([frame, output]))
 
-    # for cnt in contours:
-    #     approx = cv.approxPolyDP(cnt,0.01*cv.arcLength(cnt,True),True)
-    #     print(len(approx))
-    #     if len(approx)==4:
-    #         print("quadrilateral")
-    #         cv.drawContours(frame,[cnt],0,(0,0,255),-1)
-    #     cv.imshow('conts', frame)
+
 
 def detect_movement():
     frame1 = imutils.resize(frame1, width=600)
@@ -74,3 +78,9 @@ while cap.isOpened():
 
 cap.release()
 cv.destroyAllWindows()
+
+out = cv.VideoWriter('movement.avi',cv.VideoWriter_fourcc(*'DIVX'), 15, size)
+for i in range(len(img_array)):
+    out.write(img_array[i])
+
+out.release()
