@@ -4,6 +4,9 @@ from collections import deque
 from imutils.video import VideoStream
 import imutils
 import time
+from grip import GripPipeline
+
+pipe = GripPipeline()
 
 img_array = [] #for frames with green boxes
 
@@ -16,29 +19,8 @@ size = (width,height) #1920, 1080
 
 def detect_green_boxes():
     ret, frame = cap.read()
-    frame = imutils.resize(frame, width=600)
-    #blurred = cv.GaussianBlur(frame, (11, 11), 0)
-
-    greenLower = np.array([0, 100, 0], dtype="uint8") #68, 230, 38 - 28, 220, 58
-    greenUpper = np.array([100, 255, 100], dtype="uint8") #-48, 240, 78
-
-    mask = cv.inRange(frame, greenLower, greenUpper)
-    output = cv.bitwise_and(frame, frame, mask = mask)
-    edged = cv.Canny(output, 30, 200)
-
-    contours, hierarchy = cv.findContours(edged.copy(), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-#    cnts = cv.findContours(output, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-#    cnts = imutils.grab_contours(cnts)
-    cv.drawContours(frame, contours, -1, (0, 255, 0), 1)
-
-    #print("contours ", len(cnts))
-
-    #if len(cnts) > 0:
-    #    img_array.append(frame)
-
-    #_,threshold = cv.threshold(gray, 110, 255, cv.THRESH_BINARY)
-    #contours,_=cv.findContours(threshold, cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
-    cv.imshow('frame', np.hstack([frame, output]))
+    pipe.process(frame)
+    cv.imshow('frame', frame)
 
 
 
