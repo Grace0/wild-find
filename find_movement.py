@@ -10,7 +10,7 @@ pipe = GripPipeline()
 
 img_array = [] #for frames with green boxes
 
-cap = cv.VideoCapture('./vid/best-upward-bees.mp4')
+cap = cv.VideoCapture('./vid/47.mp4')
 fps = cap.get(cv.CAP_PROP_FPS) #15
 
 ret, frame1 = cap.read()
@@ -20,17 +20,24 @@ size = (width,height) #1920, 1080
 def detect_green_boxes():
     ret, frame = cap.read()
     pipe.process(frame)
-    cv.imshow('frame', frame)
+    contours = pipe.find_contours_output
+    output = cv.drawContours(frame.copy(), contours, -1, (0, 255, 0), 3)
 
-
-
-def detect_movement():
-    frame1 = imutils.resize(frame1, width=600)
-    frame2 = imutils.resize(frame2, width=600)
-    diff = cv.absdiff(frame1, frame2)
-    gray = cv.cvtColor(diff, cv.COLOR_BGR2GRAY)
-    _,threshold = cv.threshold(img, 110, 255, cv.THRESH_BINARY)
-    contours,_=cv.findContours(threshold, cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
+    print(str(len(contours)))
+    if len(contours) > 0: #does return num of contours
+        cv.circle(output,(300,240), 63, (0,0,255), -1)
+        print("yes")
+    else:
+        None
+    two_images = np.hstack((frame, output))
+    cv.imshow('frame', two_images)
+# def detect_movement():
+#     frame1 = imutils.resize(frame1, width=600)
+#     frame2 = imutils.resize(frame2, width=600)
+#     diff = cv.absdiff(frame1, frame2)
+#     gray = cv.cvtColor(diff, cv.COLOR_BGR2GRAY)
+#     _,threshold = cv.threshold(img, 110, 255, cv.THRESH_BINARY)
+#     contours,_=cv.findContours(threshold, cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
 
 
 while cap.isOpened():
