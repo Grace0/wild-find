@@ -21,9 +21,10 @@ def detect_green_boxes():
     ret, frame = cap.read()
     pipe.process(frame)
     contours = pipe.find_contours_output
-    output = cv.drawContours(frame.copy(), contours, -1, (0, 255, 0), 3)
+    #print("shape: " + str(frame.ndim) + " shape: " + str(frame.shape))
+    output = cv.drawContours(frame.copy(), contours, -1, (0, 0, 255), 3) #BGR
 
-    print(str(len(contours)))
+    print("cnt: " + str(len(contours)))
     if len(contours) > 0: #does return num of contours
         cv.circle(output,(300,240), 63, (0,0,255), -1)
         print("yes")
