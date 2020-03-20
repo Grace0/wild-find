@@ -19,9 +19,9 @@ class GripPipeline:
         self.resize_image_output = None
 
         self.__rgb_threshold_input = self.resize_image_output
-        self.__rgb_threshold_red = [51.0, 91.0] # +- 20
-        self.__rgb_threshold_green = [216.0, 256.0]
-        self.__rgb_threshold_blue = [20.0, 60.0]
+        self.__rgb_threshold_red = [31, 111.0] #[51.0, 91.0] # +- 20
+        self.__rgb_threshold_green = [196, 276.0] #[216.0, 256.0]
+        self.__rgb_threshold_blue = [10, 80]#[20.0, 60.0]
 
         self.rgb_threshold_output = None
 

@@ -22,7 +22,7 @@ def detect_green_boxes():
     pipe.process(frame)
     contours = pipe.find_contours_output
     #print("shape: " + str(frame.ndim) + " shape: " + str(frame.shape))
-    output = cv.drawContours(frame.copy(), contours, -1, (0, 0, 255), 3) #BGR
+    output = cv.drawContours(pipe.resize_image_output, contours, -1, (0, 0, 255), 3) #BGR
 
     print("cnt: " + str(len(contours)))
     if len(contours) > 0: #does return num of contours
@@ -30,33 +30,15 @@ def detect_green_boxes():
         print("yes")
     else:
         None
-    two_images = np.hstack((frame, output))
+    two_images = np.hstack((pipe.resize_image_output, output))
     cv.imshow('frame', two_images)
-# def detect_movement():
-#     frame1 = imutils.resize(frame1, width=600)
-#     frame2 = imutils.resize(frame2, width=600)
-#     diff = cv.absdiff(frame1, frame2)
-#     gray = cv.cvtColor(diff, cv.COLOR_BGR2GRAY)
-#     _,threshold = cv.threshold(img, 110, 255, cv.THRESH_BINARY)
-#     contours,_=cv.findContours(threshold, cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
 
 
 while cap.isOpened():
     detect_green_boxes()
 
-#     frame1 = imutils.resize(frame1, width=600)
-#     frame2 = imutils.resize(frame2, width=600)
-#     diff = cv.absdiff(frame1, frame2)
-#     gray = cv.cvtColor(diff, cv.COLOR_BGR2GRAY)
-#
-#     cv.imshow('frame1', frame1)
-#     cv.imshow('diff', diff)
-#
-#     frame1 = frame2 #current becomes old
-#     ret, frame2 = cap.read() #new
-#
-    time.sleep(0.1)
-#
+    time.sleep(0.3)
+
     if cv.waitKey(1) == ord('q'):
          break
 
