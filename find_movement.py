@@ -37,8 +37,6 @@ def detect_green_boxes():
 while cap.isOpened():
     detect_green_boxes()
 
-    time.sleep(0.3)
-
     if cv.waitKey(1) == ord('q'):
          break
 
