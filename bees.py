@@ -23,8 +23,7 @@ frame1_rgb = pipe.rgb_threshold_output
 
 fig = plt.figure()
 plot = fig.add_subplot(411)
-plt.ylim(0, 5)
-plot.autoscale(enable=True, axis='x', tight=None)
+plot.autoscale(enable=True, axis='both', tight=None)
 
 while cap.isOpened():
 
@@ -49,6 +48,10 @@ while cap.isOpened():
 
     x.append(frame_count)
     y.append(str(len(pipe.filter_contours_output)))
+
+    if len(y) == 48: #first bee counts go 1,3,2; but new numbers are added to the plot axes in order of their appearance; insert 2 as a temporary fix
+        y[47] = 2
+
     plot.plot(x, y, color='red', linewidth=1)
     plt.draw()
     plt.pause(.001)
