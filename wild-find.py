@@ -7,33 +7,31 @@ import time
 
 #BEES
 
-cap = cv.VideoCapture('./vid/best-upward-bees.mp4')
+cap = cv.VideoCapture('./vid/best-upward-bees-cropped.mp4')
 
 ret, frame1 = cap.read()
-ret, frame2 = cap.read()
+frame1 = cv.cvtColor(frame1, cv.COLOR_BGR2GRAY)
 
 while cap.isOpened():
-    frame1 = imutils.resize(frame1, width=600)
-    frame2 = imutils.resize(frame2, width=600)
-    diff = cv.absdiff(frame1, frame2)
-    gray = cv.cvtColor(diff, cv.COLOR_BGR2GRAY)
-
+    # frame1 = imutils.resize(frame1, width=600)
+    # frame2 = imutils.resize(frame2, width=600)
+    ret, frame = cap.read()
+    gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    diff = cv.absdiff(gray, frame1)
+    thresh = cv.threshold(diff, 100, 255, cv.THRESH_BINARY)[1]
 #    blur = cv.GaussianBlur(gray, (5, 5), 0)
 #    _, thresh = cv.threshold(blur, 50, 255, cv.THRESH_BINARY)
 #    dilated = cv.dilate(thresh, None, iterations=3)
 #    contours, _ = cv.findContours(dilated, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 #    cv.drawContours(frame1, contours, -1, (0, 255, 0), 2)
 
-    cv.imshow('frame1', frame1)
-    cv.imshow('diff', diff)
-    cv.imshow('gray', gray)
+    cv.imshow('thresh', thresh)
+    # #cv.imshow('diff', diff)
+    # cv.imshow('gray', thresh)
+    #two_images = np.hstack(thresh))
+    cv.imshow('frame', frame)
 
-    frame1 = frame2 #current becomes old
-    ret, frame2 = cap.read() #new
-
-    time.sleep(0.5)
-
-    if cv.waitKey(1) == ord('q'):
+    if cv.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
