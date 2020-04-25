@@ -15,25 +15,29 @@ cap = cv.VideoCapture('./vid/best-upward-bees-cropped.mp4')
 
 ret, frame1 = cap.read() #get first frame
 pipe.process(frame1) #process first frame
-contours = pipe.filter_contours_output #get processed contours for first frame
-frame1 = cv.drawContours(frame1, contours, -1, (0, 0, 255), 3) #show processed contours for first frame
+frame1_rgb = pipe.rgb_threshold_output
 
 while cap.isOpened():
 
-        #print("shape: " + str(frame.ndim) + " shape: " + str(frame.shape))
+    ret, frame = cap.read()
+    unprocessed = frame
+    pipe.process(frame)
+    frame_rgb = pipe.rgb_threshold_output
 
-    # frame1 = imutils.resize(frame1, width=600)
-    # frame2 = imutils.resize(frame2, width=600)
-     ret, frame = cap.read()
-     pipe.process(frame)
-     contours = pipe.filter_contours_output
-     frame = cv.drawContours(frame, contours, -1, (0, 0, 255), 3)
+    diff = cv.absdiff(frame_rgb, frame1_rgb)
+    thresh = cv.threshold(diff, 100, 255, cv.THRESH_BINARY)[1]
 
-     cv.imshow('frame1', frame1)
-     cv.imshow('frame', frame)
+    two_images = np.hstack((frame_rgb, thresh))
+    cv.imshow('unprocessed', unprocessed)
+    cv.imshow('frame', two_images)
 
-     if cv.waitKey(1) == ord('q'):
-          break
+    # cv.imshow('frame1', frame1_rgb)
+    # cv.imshow('frame', frame_rgb)
+
+    if cv.waitKey(1) == ord('q'):
+         break
+               # contours = pipe.filter_contours_output
+               # frame = cv.drawContours(frame, contours, -1, (0, 0, 255), 3)
     # gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
     # diff = cv.absdiff(gray, frame1)

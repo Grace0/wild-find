@@ -159,7 +159,7 @@ class BeePipeline:
             if (len(contour) < min_vertex_count or len(contour) > max_vertex_count):
                 continue
             ratio = (float)(w) / h
-            print("ratio: " + str(ratio)) #printing all ratios
+            #print("ratio: " + str(ratio)) #printing all ratios
             if (ratio < min_ratio or ratio > max_ratio): #max_ratio
                 continue
             output.append(contour)
