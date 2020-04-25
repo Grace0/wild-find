@@ -21,8 +21,10 @@ ret, frame1 = cap.read() #get first frame
 pipe.process(frame1) #process first frame
 frame1_rgb = pipe.rgb_threshold_output
 
-fig = plt.figure() #figsize=(4,13
-plot = fig.add_subplot(111)
+fig = plt.figure()
+plot = fig.add_subplot(411)
+plt.ylim(0, 5)
+plot.autoscale(enable=True, axis='x', tight=None)
 
 while cap.isOpened():
 
@@ -55,10 +57,14 @@ while cap.isOpened():
     data = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
     data = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
 
-#    resized = cv.resize(data, (748, 1280), interpolation = cv.INTER_AREA)
+    # resized = cv.resize(data, (1280, 374), interpolation = cv.INTER_AREA)
 
+    # cv.imshow('resized', resized)
+    # cv.imshow('unprocessed', unprocessed)
     two_images = np.vstack((unprocessed, data))
     cv.imshow('BEE COUNT', two_images)
+#plots 3 under 2
+#why can't vstack?
 
     time.sleep(0.1)
 
