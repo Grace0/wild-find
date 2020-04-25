@@ -25,11 +25,21 @@ while cap.isOpened():
     frame_rgb = pipe.rgb_threshold_output
 
     diff = cv.absdiff(frame_rgb, frame1_rgb)
-    thresh = cv.threshold(diff, 100, 255, cv.THRESH_BINARY)[1]
+    thresh = cv.threshold(diff, 200, 255, cv.THRESH_BINARY)[1]
 
-    two_images = np.hstack((frame_rgb, thresh))
+    pipe.process_diff(thresh)
+    thresh_contours = pipe.filter_contours_output
+    cv.drawContours(unprocessed, thresh_contours, -1, (0, 255, 0), 2)
+#    (pipe.find_contours_output) = pipe.__find_contours(pipe.__find_contours_input, pipe.__find_contours_external_only)
+
+    # Step Filter_Contours0:
+    # self.__filter_contours_contours = self.find_contours_output
+    # (self.filter_contours_output) = self.__filter_contours(self.__filter_contours_contours, self.__filter_contours_min_area, self.__filter_contours_min_perimeter, self.__filter_contours_min_width, self.__filter_contours_max_width, self.__filter_contours_min_height, self.__filter_contours_max_height, self.__filter_contours_solidity, self.__filter_contours_max_vertices, self.__filter_contours_min_vertices, self.__filter_contours_min_ratio, self.__filter_contours_max_ratio)
+
+
+    #two_images = np.hstack((thresh, thresh_contours))
     cv.imshow('unprocessed', unprocessed)
-    cv.imshow('frame', two_images)
+    #cv.imshow('frame', two_images)
 
     # cv.imshow('frame1', frame1_rgb)
     # cv.imshow('frame', frame_rgb)

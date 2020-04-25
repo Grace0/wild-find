@@ -13,7 +13,7 @@ class BeePipeline:
         """
 
         self.__blur_type = BlurType.Gaussian_Blur
-        self.__blur_radius = 4.504504504504505
+        self.__blur_radius = 6.504504504504505
 
         self.blur_output = None
 
@@ -30,17 +30,17 @@ class BeePipeline:
         self.find_contours_output = None
 
         self.__filter_contours_contours = self.find_contours_output
-        self.__filter_contours_min_area = 0.0
+        self.__filter_contours_min_area = 10.0
         self.__filter_contours_min_perimeter = 0.0
         self.__filter_contours_min_width = 0.0
         self.__filter_contours_max_width = 1000
         self.__filter_contours_min_height = 0.0
         self.__filter_contours_max_height = 1000
-        self.__filter_contours_solidity = [0, 100]
+        self.__filter_contours_solidity = [90, 100]
         self.__filter_contours_max_vertices = 1000000
-        self.__filter_contours_min_vertices = 4.0
+        self.__filter_contours_min_vertices = 5.0
         self.__filter_contours_min_ratio = 0.0
-        self.__filter_contours_max_ratio = 5.0
+        self.__filter_contours_max_ratio = 4.0
 
         self.filter_contours_output = None
 
@@ -57,13 +57,15 @@ class BeePipeline:
         self.__rgb_threshold_input = self.blur_output
         (self.rgb_threshold_output) = self.__rgb_threshold(self.__rgb_threshold_input, self.__rgb_threshold_red, self.__rgb_threshold_green, self.__rgb_threshold_blue)
 
+    def process_diff(self, source0):
         # Step Find_Contours0:
-        self.__find_contours_input = self.rgb_threshold_output
+        self.__find_contours_input = source0
         (self.find_contours_output) = self.__find_contours(self.__find_contours_input, self.__find_contours_external_only)
 
         # Step Filter_Contours0:
         self.__filter_contours_contours = self.find_contours_output
         (self.filter_contours_output) = self.__filter_contours(self.__filter_contours_contours, self.__filter_contours_min_area, self.__filter_contours_min_perimeter, self.__filter_contours_min_width, self.__filter_contours_max_width, self.__filter_contours_min_height, self.__filter_contours_max_height, self.__filter_contours_solidity, self.__filter_contours_max_vertices, self.__filter_contours_min_vertices, self.__filter_contours_min_ratio, self.__filter_contours_max_ratio)
+
 
 
     @staticmethod
@@ -152,10 +154,13 @@ class BeePipeline:
                 continue
             if (cv2.arcLength(contour, True) < min_perimeter):
                 continue
-            # hull = cv2.convexHull(contour)
-            # solid = 100 * area / cv2.contourArea(hull)
-            # if (solid < solidity[0] or solid > solidity[1]):
-            #     continue
+            hull = cv2.convexHull(contour)
+            if cv2.contourArea(hull) > 0:
+                solid = 100 * area / cv2.contourArea(hull)
+                if (solid < solidity[0] or solid > solidity[1]):
+                    continue
+            else:
+                continue
             if (len(contour) < min_vertex_count or len(contour) > max_vertex_count):
                 continue
             ratio = (float)(w) / h
