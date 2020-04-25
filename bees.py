@@ -22,6 +22,9 @@ ret, frame1 = cap.read() #get first frame
 pipe.process(frame1) #process first frame
 frame1_rgb = pipe.rgb_threshold_output
 
+fig = plt.figure()
+plot = fig.add_subplot(111)
+
 while cap.isOpened():
 
     frame_count += 1
@@ -46,8 +49,8 @@ while cap.isOpened():
 #    plt.axis([0,100,0,10])
 
 
-    x.append(frame_count)
-    y.append(str(len(pipe.filter_contours_output)))
+
+
     # #two_images = np.hstack((thresh, thresh_contours))
     # plot(x, y)
     # draw()
@@ -56,10 +59,33 @@ while cap.isOpened():
     # # plt.xlabel('FRAME NUMBER')
 
     # # plt.show() #update while showing?!
-    plt.autoscale(enable=True, axis='both', tight=None)
-    plt.plot(x, y, color='black', linewidth=2, markersize=2)
+
+
+# draw a cardinal sine plot
+    # x = np.arange ( 0, 100, 0.1 )
+    # y = np.sin(x)
+    x.append(frame_count)
+    y.append(str(len(pipe.filter_contours_output)))
+    plot.plot(x, y, color='red', linewidth=1)
     plt.draw()
-    plt.pause(0.001)
+    plt.pause(.001)
+#    fig.canvas.draw()
+
+    data = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8) #, sep=''
+    data = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+
+    # w,h = fig.canvas.get_width_height()
+    # buf = np.frombuffer ( fig.canvas.tostring_argb(), dtype=np.uint8 )
+    # buf.shape = ( w, h,4 )
+    #
+    # # canvas.tostring_argb give pixmap in ARGB mode. Roll the ALPHA channel to have it in RGBA mode
+    # buf = np.roll ( buf, 3, axis = 2 )
+    cv.imshow('data', data)
+
+    # plt.autoscale(enable=True, axis='both', tight=None)
+    # plt.plot(x, y, color='black', linewidth=2, markersize=2)
+    # plt.draw()
+    # plt.pause(0.001)
 
     cv.imshow('unprocessed', unprocessed)
     #cv.imshow('frame', two_images)
