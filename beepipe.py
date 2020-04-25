@@ -43,6 +43,7 @@ class BeePipeline:
         self.__filter_contours_max_ratio = 5.0
 
         self.filter_contours_output = None
+        self.contours_count = 0
 
 
     def process(self, source0):
@@ -143,6 +144,7 @@ class BeePipeline:
             Contours as a list of numpy.ndarray.
         """
         output = []
+        contours_count = len(output)
         for contour in input_contours:
             x,y,w,h = cv2.boundingRect(contour)
             if (w < min_width or w > max_width):

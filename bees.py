@@ -3,10 +3,15 @@ import numpy as np
 import imutils
 import time
 from beepipe import BeePipeline
+import matplotlib.pyplot as plt
+from matplotlib.pyplot import plot, draw, show
 
 pipe = BeePipeline()
 
+x = []
+y = []
 bee_count = 0
+frame_count = 0
 
 def detect_bees():
     None
@@ -19,6 +24,8 @@ frame1_rgb = pipe.rgb_threshold_output
 
 while cap.isOpened():
 
+    frame_count += 1
+
     ret, frame = cap.read()
     unprocessed = frame
     pipe.process(frame)
@@ -29,15 +36,31 @@ while cap.isOpened():
 
     pipe.process_diff(thresh)
     thresh_contours = pipe.filter_contours_output
-    cv.drawContours(unprocessed, thresh_contours, -1, (0, 255, 0), 2)
+    cv.drawContours(unprocessed, thresh_contours, -1, (255, 255, 255), 2)
 #    (pipe.find_contours_output) = pipe.__find_contours(pipe.__find_contours_input, pipe.__find_contours_external_only)
-
     # Step Filter_Contours0:
     # self.__filter_contours_contours = self.find_contours_output
     # (self.filter_contours_output) = self.__filter_contours(self.__filter_contours_contours, self.__filter_contours_min_area, self.__filter_contours_min_perimeter, self.__filter_contours_min_width, self.__filter_contours_max_width, self.__filter_contours_min_height, self.__filter_contours_max_height, self.__filter_contours_solidity, self.__filter_contours_max_vertices, self.__filter_contours_min_vertices, self.__filter_contours_min_ratio, self.__filter_contours_max_ratio)
+    cv.putText(unprocessed, str(len(pipe.filter_contours_output)), (50,100), cv.FONT_HERSHEY_PLAIN, 5, (255, 255, 255), 5)
+
+#    plt.axis([0,100,0,10])
 
 
-    #two_images = np.hstack((thresh, thresh_contours))
+    x.append(frame_count)
+    y.append(str(len(pipe.filter_contours_output)))
+    # #two_images = np.hstack((thresh, thresh_contours))
+    # plot(x, y)
+    # draw()
+    # show()
+    # # plt.ylabel('BEE COUNT')
+    # # plt.xlabel('FRAME NUMBER')
+
+    # # plt.show() #update while showing?!
+    plt.autoscale(enable=True, axis='both', tight=None)
+    plt.plot(x, y, color='black', linewidth=2, markersize=2)
+    plt.draw()
+    plt.pause(0.001)
+
     cv.imshow('unprocessed', unprocessed)
     #cv.imshow('frame', two_images)
 
