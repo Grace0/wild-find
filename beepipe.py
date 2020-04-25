@@ -13,7 +13,7 @@ class BeePipeline:
         """
 
         self.__blur_type = BlurType.Gaussian_Blur
-        self.__blur_radius = 6.504504504504505
+        self.__blur_radius = 2.504504504504505
 
         self.blur_output = None
 
@@ -25,22 +25,22 @@ class BeePipeline:
         self.rgb_threshold_output = None
 
         self.__find_contours_input = self.rgb_threshold_output
-        self.__find_contours_external_only = False
+        self.__find_contours_external_only = True
 
         self.find_contours_output = None
 
         self.__filter_contours_contours = self.find_contours_output
-        self.__filter_contours_min_area = 10.0
+        self.__filter_contours_min_area = 1.0
         self.__filter_contours_min_perimeter = 0.0
         self.__filter_contours_min_width = 0.0
         self.__filter_contours_max_width = 1000
         self.__filter_contours_min_height = 0.0
         self.__filter_contours_max_height = 1000
-        self.__filter_contours_solidity = [90, 100]
+        self.__filter_contours_solidity = [50, 100]
         self.__filter_contours_max_vertices = 1000000
-        self.__filter_contours_min_vertices = 5.0
+        self.__filter_contours_min_vertices = 3.0
         self.__filter_contours_min_ratio = 0.0
-        self.__filter_contours_max_ratio = 4.0
+        self.__filter_contours_max_ratio = 5.0
 
         self.filter_contours_output = None
 

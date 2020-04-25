@@ -11,7 +11,7 @@ bee_count = 0
 def detect_bees():
     None
 
-cap = cv.VideoCapture('./vid/best-upward-bees-cropped.mp4')
+cap = cv.VideoCapture('./vid/best-upward-bees-sky.mp4')
 
 ret, frame1 = cap.read() #get first frame
 pipe.process(frame1) #process first frame
@@ -43,6 +43,9 @@ while cap.isOpened():
 
     # cv.imshow('frame1', frame1_rgb)
     # cv.imshow('frame', frame_rgb)
+
+    time.sleep(0.1)
+
 
     if cv.waitKey(1) == ord('q'):
          break
