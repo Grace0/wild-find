@@ -6,6 +6,8 @@ from beepipe import BeePipeline
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import plot, draw, show
 
+from moviepy.editor import ImageSequenceClip
+
 pipe = BeePipeline()
 
 x = []
@@ -25,7 +27,9 @@ fig = plt.figure()
 plot = fig.add_subplot(411)
 plot.autoscale(enable=True, axis='both', tight=None)
 
-while cap.isOpened():
+frame_array = []
+
+while frame_count < 820: #cap.isOpened()
 
     frame_count += 1
 
@@ -40,10 +44,7 @@ while cap.isOpened():
     pipe.process_diff(thresh)
     thresh_contours = pipe.filter_contours_output
     cv.drawContours(unprocessed, thresh_contours, -1, (255, 255, 255), 2)
-#    (pipe.find_contours_output) = pipe.__find_contours(pipe.__find_contours_input, pipe.__find_contours_external_only)
-    # Step Filter_Contours0:
-    # self.__filter_contours_contours = self.find_contours_output
-    # (self.filter_contours_output) = self.__filter_contours(self.__filter_contours_contours, self.__filter_contours_min_area, self.__filter_contours_min_perimeter, self.__filter_contours_min_width, self.__filter_contours_max_width, self.__filter_contours_min_height, self.__filter_contours_max_height, self.__filter_contours_solidity, self.__filter_contours_max_vertices, self.__filter_contours_min_vertices, self.__filter_contours_min_ratio, self.__filter_contours_max_ratio)
+
     cv.putText(unprocessed, str(len(pipe.filter_contours_output)), (50,100), cv.FONT_HERSHEY_PLAIN, 5, (255, 255, 255), 5)
 
     x.append(frame_count)
@@ -52,28 +53,34 @@ while cap.isOpened():
     if len(y) == 48: #first bee counts go 1,3,2; but new numbers are added to the plot axes in order of their appearance; insert 2 as a temporary fix
         y[47] = 2
 
+    if len(y) == 505: #first bee counts go 1,3,2; but new numbers are added to the plot axes in order of their appearance; insert 2 as a temporary fix
+        y[504] = 5
+
     plot.plot(x, y, color='red', linewidth=1)
     plt.draw()
     plt.pause(.001)
-#    fig.canvas.draw()
 
     data = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
     data = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
 
-    # resized = cv.resize(data, (1280, 374), interpolation = cv.INTER_AREA)
-
-    # cv.imshow('resized', resized)
-    # cv.imshow('unprocessed', unprocessed)
     two_images = np.vstack((unprocessed, data))
-    cv.imshow('BEE COUNT', two_images)
-#plots 3 under 2
-#why can't vstack?
+    cropped_image = two_images[0:1200, 0:1280]
+    cv.imshow('BEE COUNT', cropped_image)
 
-    time.sleep(0.1)
+    cropped_image_bgr = cv.cvtColor(cropped_image, cv.COLOR_RGB2BGR)
+    frame_array.append(cropped_image_bgr)
+
+    #time.sleep(0.1) #approx correct timing?
 
     if cv.waitKey(1) == ord('q'):
          break
 
-
 cap.release()
 cv.destroyAllWindows()
+
+pathOut = 'bee_counter.mp4'
+fps = 0.5
+size = (1200, 1280)
+
+clip = ImageSequenceClip(frame_array, fps=15)
+clip.write_videofile("bee_counter.mp4",fps=15)
